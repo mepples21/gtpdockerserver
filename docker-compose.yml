@@ -22,12 +22,45 @@ services:
           - ${USERDIR}/docker/shared:/shared
         environment:
           - TZ=${TZ}
-    header-app-tester:
+    header-app:
         image: fhakamine/header-app-tester
-        container_name: header-app-tester
+        container_name: header-app
         restart: always
         ports: 
           - "3000:3000"
-networks: 
+    saml-app:
+        image: beryju/saml-test-sp
+        container_name: saml-app
+        restart: always
+        ports: 
+          - "9009:9009"
+          - "9000:9000"
+        environment: 
+          - SP_BIND=0.0.0.0:9000
+          - SP_ROOT_URL=http://localhost:9000
+          - SP_ENTITY_ID=saml-test-sp
+        labels:
+          - "traefik.enable=true"
+          - "traefik.frontend.rule=Host:saml.app.michaelepping.com"
+          - "traefik.port=9000"
+          - "traefik.docker.network=web"
+    traefik:
+        image: traefik:1.7.24
+        restart: always
+        ports:
+          - "80:80"
+          - "443:443"
+        networks:
+          - web
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - ${USERDIR}/docker/traefik/traefik.toml:/traefik.toml
+          - ${USERDIR}/docker/traefik/acme.json:/acme.json
+        container_name: traefik
+        command: --configFile=/traefik.toml
+networks:
+    web:
+        external:
+            name: web
     default:
         driver: bridge
