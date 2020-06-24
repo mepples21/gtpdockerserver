@@ -11,6 +11,9 @@ defaultEntryPoints = ["https","http"]
   [entryPoints.https]
     address = ":443"
   [entryPoints.https.tls]
+    [[entryPoints.https.tls.certificates]]
+    certFile = "/etc/traefik/certs/wildcard.pem"
+    keyFile = "/etc/traefik/certs/wildcard.key"
 
 # REMOVE this section if you don't want the dashboard/API
 #[api]
@@ -25,11 +28,3 @@ domain = "APPS.MICHAELEPPING.COM"
 watch = true
 # I prefer to expose my containers explicitly
 exposedbydefault = false
-
-[acme]
-email = "michael@rvrwest.com"
-storage = "acme.json"
-entryPoint = "https"
-OnHostRule = true
-[acme.httpChallenge]
-entryPoint = "http"
