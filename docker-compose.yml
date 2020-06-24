@@ -1,0 +1,33 @@
+version: "3.6"
+services:
+    # watchtower:
+    #     container_name: watchtower
+    #     restart: always
+    #     image: v2tec/watchtower
+    #     volumes:
+    #       - /var/run/docker.sock:/var/run/docker.sock
+    #     command: --schedule "0 0 4 * * *" --cleanup
+    #     deploy:
+    #         #mode: replicated
+    portainer:
+        image: portainer/portainer:latest
+        container_name: portainer
+        restart: always
+        command: -H unix:///var/run/docker.sock --admin-password 'VrDPmpv#XRPNnPtvvMapXnep9sfGD{DMeRKjCeks'
+        ports:
+          - "9000:9000"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - ${USERDIR}/docker/portainer/data:/data
+          - ${USERDIR}/docker/shared:/shared
+        environment:
+          - TZ=${TZ}
+    header-app-tester:
+        image: fhakamine/header-app-tester
+        container_name: header-app-tester
+        restart: always
+        ports: 
+          - "3000:3000"
+networks: 
+    default:
+        driver: bridge
