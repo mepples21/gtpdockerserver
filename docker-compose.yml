@@ -4,7 +4,6 @@ services:
         image: portainer/portainer:latest
         container_name: portainer
         restart: always
-        command: -H unix:///var/run/docker.sock --admin-password '$$2y$$10$$pzoGsHsnjXAi2UnPOxpY8uDd8J6Ob9koNqVRrZHK6ZKLmVjnVm3ri'
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - ${USERDIR}/docker/portainer/data:/data
