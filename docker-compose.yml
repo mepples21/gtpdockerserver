@@ -60,7 +60,7 @@ services:
         restart: always
         environment: 
           - SP_BIND=0.0.0.0:9000
-          - SP_ROOT_URL=http://localhost:9000
+          - SP_ROOT_URL=http://gtpsamlapp.michaelepping.com
           - SP_ENTITY_ID=saml-test-sp
           - SP_METADATA_URL=https://login.microsoftonline.com/0348ff6f-154e-41c2-b1b7-60743cb165dc/federationmetadata/2007-06/federationmetadata.xml?appid=e962affe-2a68-4927-92c4-fff0a4844b3b
         ports: 
