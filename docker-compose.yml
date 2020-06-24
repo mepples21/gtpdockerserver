@@ -30,12 +30,12 @@ services:
           - "traefik.frontend.headers.STSIncludeSubdomains=true"
           - "traefik.frontend.headers.STSPreload=true"
           - "traefik.frontend.headers.frameDeny=true"
-    header-app:
+    headerapp:
         image: mepples21/headerapp:latest
         container_name: headerapp
         restart: always
         ports: 
-          - "3000:3000"
+          - "8085:8085"
         networks: 
           - web
         labels: 
@@ -54,7 +54,7 @@ services:
           - "traefik.frontend.headers.STSIncludeSubdomains=true"
           - "traefik.frontend.headers.STSPreload=true"
           - "traefik.frontend.headers.frameDeny=true"
-    saml-app:
+    samlapp:
         image: beryju/saml-test-sp
         container_name: samlapp
         restart: always
