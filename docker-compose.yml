@@ -1,14 +1,5 @@
 version: "3.6"
 services:
-    # watchtower:
-    #     container_name: watchtower
-    #     restart: always
-    #     image: v2tec/watchtower
-    #     volumes:
-    #       - /var/run/docker.sock:/var/run/docker.sock
-    #     command: --schedule "0 0 4 * * *" --cleanup
-    #     deploy:
-    #         #mode: replicated
     portainer:
         image: portainer/portainer:latest
         container_name: portainer
@@ -20,6 +11,8 @@ services:
           - ${USERDIR}/docker/shared:/shared
         environment:
           - TZ=${TZ}
+        networks:
+          - web
         labels:
           - "traefik.enable=true"
           - "traefik.frontend.rule=Host:portainer.app.michaelepping.com"
@@ -31,6 +24,8 @@ services:
         restart: always
         ports: 
           - "3000:3000"
+        networks: 
+          - web
     saml-app:
         image: beryju/saml-test-sp
         container_name: saml-app
@@ -39,6 +34,8 @@ services:
           - SP_BIND=0.0.0.0:9000
           - SP_ROOT_URL=http://localhost:9000
           - SP_ENTITY_ID=saml-test-sp
+        networks: 
+          - web
         labels:
           - "traefik.enable=true"
           - "traefik.frontend.rule=Host:saml.app.michaelepping.com"
