@@ -14,8 +14,6 @@ services:
         container_name: portainer
         restart: always
         command: -H unix:///var/run/docker.sock --admin-password 'VrDPmpv#XRPNnPtvvMapXnep9sfGD{DMeRKjCeks'
-        ports:
-          - "9000:9000"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - ${USERDIR}/docker/portainer/data:/data
@@ -37,9 +35,6 @@ services:
         image: beryju/saml-test-sp
         container_name: saml-app
         restart: always
-        ports: 
-          - "9009:9009"
-          - "9000:9000"
         environment: 
           - SP_BIND=0.0.0.0:9000
           - SP_ROOT_URL=http://localhost:9000
