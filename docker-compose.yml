@@ -26,6 +26,11 @@ services:
           - "3000:3000"
         networks: 
           - web
+        labels: 
+          - "traefik.enable=true"
+          - "traefik.frontend.rule=Host:kerberosapp.app.michaelepping.com"
+          - "traefik.port=3000"
+          - "traefik.docker.network=web"
     saml-app:
         image: beryju/saml-test-sp
         container_name: saml-app
@@ -38,7 +43,7 @@ services:
           - web
         labels:
           - "traefik.enable=true"
-          - "traefik.frontend.rule=Host:saml.app.michaelepping.com"
+          - "traefik.frontend.rule=Host:samlapp.app.michaelepping.com"
           - "traefik.port=9000"
           - "traefik.docker.network=web"
     traefik:
