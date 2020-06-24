@@ -22,6 +22,11 @@ services:
           - ${USERDIR}/docker/shared:/shared
         environment:
           - TZ=${TZ}
+        labels:
+          - "traefik.enable=true"
+          - "traefik.frontend.rule=Host:portainer.app.michaelepping.com"
+          - "traefik.port=9000"
+          - "traefik.docker.network=web"
     header-app:
         image: fhakamine/header-app-tester
         container_name: header-app
