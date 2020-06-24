@@ -11,6 +11,8 @@ services:
           - ${USERDIR}/docker/shared:/shared
         environment:
           - TZ=${TZ}
+        ports: 
+          - "9000:9000"
         networks:
           - web
         labels:
