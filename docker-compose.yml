@@ -74,7 +74,7 @@ services:
 #          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
           - "traefik.port=9000"
           - "traefik.docker.network=web"
-          - "traefik.frontend.headers.SSLRedirect=true"
+          - "traefik.frontend.headers.SSLRedirect=false"
           - "traefik.frontend.headers.STSSeconds=315360000"
           - "traefik.frontend.headers.browserXSSFilter=true"
           - "traefik.frontend.headers.contentTypeNosniff=true"
