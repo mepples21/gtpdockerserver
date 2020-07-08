@@ -1,128 +1,29 @@
 version: "3.6"
 services:
-    portainer:
-        image: portainer/portainer:latest
-        container_name: portainer
-        restart: always
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock
-          - ${USERDIR}/docker/portainer/data:/data
-          - ${USERDIR}/docker/shared:/shared
-        environment:
-          - TZ=${TZ}
-        ports: 
-          - "9000:9000"
-        networks:
-          - web
-        labels:
-          - "traefik.enable=true"
-          - "traefik.backend=portainer"
-          - "traefik.frontend.rule=Host:gtpportainer.${DOMAINNAME}"
-#          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
-          - "traefik.port=9000"
-          - "traefik.docker.network=web"
-          - "traefik.frontend.headers.SSLRedirect=true"
-          - "traefik.frontend.headers.STSSeconds=315360000"
-          - "traefik.frontend.headers.browserXSSFilter=true"
-          - "traefik.frontend.headers.contentTypeNosniff=true"
-          - "traefik.frontend.headers.forceSTSHeader=true"
-          - "traefik.frontend.headers.SSLHost=example.com"
-          - "traefik.frontend.headers.STSIncludeSubdomains=true"
-          - "traefik.frontend.headers.STSPreload=true"
-          - "traefik.frontend.headers.frameDeny=true"
     headerapp:
         image: mepples21/headerapp:latest
         container_name: headerapp
         restart: always
         ports: 
-          - "8085:8085"
-        networks: 
-          - web
-        labels: 
-          - "traefik.enable=true"
-          - "traefik.backend=headerapp"
-          - "traefik.frontend.rule=Host:gtpheaderapp.${DOMAINNAME}"
-#          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
-          - "traefik.port=8085"
-          - "traefik.docker.network=web"
-          - "traefik.frontend.headers.SSLRedirect=true"
-          - "traefik.frontend.headers.STSSeconds=315360000"
-          - "traefik.frontend.headers.browserXSSFilter=true"
-          - "traefik.frontend.headers.contentTypeNosniff=true"
-          - "traefik.frontend.headers.forceSTSHeader=true"
-          - "traefik.frontend.headers.SSLHost=example.com"
-          - "traefik.frontend.headers.STSIncludeSubdomains=true"
-          - "traefik.frontend.headers.STSPreload=true"
-          - "traefik.frontend.headers.frameDeny=true"
+          - "3000:8085"
     samlapp:
-        image: beryju/saml-test-sp
-        container_name: samlapp
+        image: 
+        container_name: 
         restart: always
-        environment: 
-          - SP_BIND=0.0.0.0:9000
-          - SP_ROOT_URL=https://gtpsamlapp.michaelepping.com
-          - SP_ENTITY_ID=saml-test-sp
-          - SP_METADATA_URL=https://login.microsoftonline.com/0348ff6f-154e-41c2-b1b7-60743cb165dc/federationmetadata/2007-06/federationmetadata.xml?appid=e962affe-2a68-4927-92c4-fff0a4844b3b
         ports: 
-          - "9001:9000"
-        networks: 
-          - web
-        labels:
-          - "traefik.enable=true"
-          - "traefik.backend=samlapp"
-          - "traefik.frontend.rule=Host:gtpsamlapp.${DOMAINNAME}"
-#          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
-          - "traefik.port=9000"
-          - "traefik.docker.network=web"
-          - "traefik.frontend.headers.SSLRedirect=false"
-          - "traefik.frontend.headers.STSSeconds=315360000"
-          - "traefik.frontend.headers.browserXSSFilter=true"
-          - "traefik.frontend.headers.contentTypeNosniff=true"
-          - "traefik.frontend.headers.forceSTSHeader=true"
-          - "traefik.frontend.headers.SSLHost=example.com"
-          - "traefik.frontend.headers.STSIncludeSubdomains=true"
-          - "traefik.frontend.headers.STSPreload=true"
-          - "traefik.frontend.headers.frameDeny=true"
-    traefik:
-        hostname: traefik
-        image: traefik:v1.7.24
-        container_name: traefik
+          - 
+    oidcapp:
+        image: 
+        container_name: 
         restart: always
-        domainname: ${DOMAINNAME}
-        networks:
-          - default
-          - web
-        ports:
-          - "80:80"
-          - "443:443"
-          - "8080:8080"
-        environment:
-          - CLOUDFLARE_EMAIL=$${CLOUDFLARE_EMAIL}
-          - CLOUDFLARE_API_KEY=$${CLOUDFLARE_API_KEY}
-          #- "constraint:node.id==yanih3skeet4jkd56v8wv2rho"
-        labels:
-          - "traefik.enable=true"
-          - "traefik.backend=traefik"
-          - "traefik.frontend.rule=Host:gtptraefik.${DOMAINNAME}"
-#          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /traefik"
-          - "traefik.port=8080"
-          - "traefik.docker.network=traefik_proxy"
-          - "traefik.frontend.headers.SSLRedirect=true"
-          - "traefik.frontend.headers.STSSeconds=315360000"
-          - "traefik.frontend.headers.browserXSSFilter=true"
-          - "traefik.frontend.headers.contentTypeNosniff=true"
-          - "traefik.frontend.headers.forceSTSHeader=true"
-          - "traefik.frontend.headers.SSLHost=example.com"
-          - "traefik.frontend.headers.STSIncludeSubdomains=true"
-          - "traefik.frontend.headers.STSPreload=true"
-          - "traefik.frontend.headers.frameDeny=true"
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock:ro
-          - ${USERDIR}/docker/traefik:/etc/traefik
-          - ${USERDIR}/docker/shared:/shared
+        ports: 
+          - 
+    kerberosapp:
+        image: 
+        container_name: 
+        restart: always
+        ports: 
+          - 
 networks:
-    web:
-        external:
-            name: web
     default:
         driver: bridge
