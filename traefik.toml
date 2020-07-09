@@ -12,8 +12,8 @@ defaultEntryPoints = ["https","http"]
     address = ":443"
   [entryPoints.https.tls]
     [[entryPoints.https.tls.certificates]]
-    certFile = "/certificate.crt"
-    keyFile = "/certificatekey.key"
+    certFile = "certificate.crt"
+    keyFile = "certificatekey.key"
 
 # REMOVE this section if you don't want the dashboard/API
 #[api]
