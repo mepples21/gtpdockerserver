@@ -20,8 +20,7 @@ else
 fi
 
 # Install Docker Compose
-dockercompose=$1
-if [ ! -f $dockercompose ]; then
+if [ ! -f "/usr/local/bin/docker-compose" ]; then
     curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
 else
