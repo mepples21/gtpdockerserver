@@ -7,13 +7,17 @@ if [ "$EUID" -ne 0 ]
 fi
 
 # Install Docker
-apt-get remove docker docker-engine docker.io containerd runc -y
-apt-get update
-apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-apt-get update
-apt-get install docker-ce docker-ce-cli containerd.io -y
+if [ -x "$(command -v docker)" ]; then
+    echo "Docker is already installed."
+else
+    apt-get remove docker docker-engine docker.io containerd runc -y
+    apt-get update
+    apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    apt-get update
+    apt-get install docker-ce docker-ce-cli containerd.io -y
+fi
 
 # Install Docker Compose
 dockercompose=$1
@@ -28,9 +32,14 @@ fi
 source ~/.bashrc
 
 # Download files
-mkdir ~/docker
-mkdir ~/docker/traefik
-mkdir ~/docker/shared
+if [ ! -d ~/docker ]; then
+    mkdir ~/docker
+    mkdir ~/docker/traefik
+    mkdir ~/docker/shared
+else
+    echo "Directories already exist."
+fi
+echo "Downloading latest version of config files"
 curl -L "https://raw.githubusercontent.com/mepples21/gtpdockerserver/master/docker-compose.yml" -o ~/docker/docker-compose.yml
 curl -L "https://raw.githubusercontent.com/mepples21/gtpdockerserver/master/traefik.toml" -o ~/docker/traefik/traefik.toml
 
@@ -46,4 +55,5 @@ openssl pkcs12 -in $certpath -password pass:$certpassword -clcerts -nokeys -out 
 openssl pkcs12 -in $certpath -password pass:$certpassword -nocerts -nodes -out ~/docker/shared/certificatekey.key
 
 # Deploy containers
+docker network create web
 docker-compose -f ~/docker/docker-compose.yml up -d
