@@ -6,6 +6,9 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
+# Create config file
+touch ~/deploy_config
+
 # Install Docker
 if [ -x "$(command -v docker)" ]; then
     echo "Docker is already installed."
@@ -44,15 +47,18 @@ curl -L "https://raw.githubusercontent.com/mepples21/gtpdockerserver/master/trae
 
 # Setup domain in config files
 read -e -p "Enter the domain you'd like to use, e.g., 'contoso.com': " domain
+echo $domain >> ~/deploy_config
 sed -i 's|${DOMAINNAME}|'$domain'|g' ~/docker/docker-compose.yml
 sed -i 's|${DOMAINNAME}|'$domain'|g' ~/docker/traefik/traefik.toml
 
 # Setup certificates and update config files
-read -e -p "Enter the path to your certificate pfx file, e.g., '/home/user1/cert.pfx' or '~/cert.pfx': " certpath
-read -e -p "Enter the password for your pfx certificate file: " certpassword
+read -p "Enter the path to your certificate pfx file, e.g., '/home/user1/cert.pfx' or '~/cert.pfx': " certpath
+echo $certpath >> ~/deploy_config
+read -sp "Enter the password for your pfx certificate file: " certpassword
 openssl pkcs12 -in $certpath -password pass:$certpassword -clcerts -nokeys -out ~/docker/shared/certificate.crt
 openssl pkcs12 -in $certpath -password pass:$certpassword -nocerts -nodes -out ~/docker/shared/certificatekey.key
 
 # Deploy containers
 docker network create web
 docker-compose -f ~/docker/docker-compose.yml up -d
+docker ps -a
