@@ -122,6 +122,8 @@ services:
           - /var/run/docker.sock:/var/run/docker.sock:ro
           - ~/docker/traefik:/etc/traefik
           - ~/docker/shared:/shared
+          - ~/docker/shared/certificate.crt:/certificate.crt
+          - ~/docker/shared/certificatekey.key:/certificatekey.key
 networks:
     web:
         external:
