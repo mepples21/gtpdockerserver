@@ -1,4 +1,6 @@
 #!/bin/bash
+# Easy Mode Install Command:
+#     curl -L "https://raw.githubusercontent.com/mepples21/gtpdockerserver/master/deploy.sh" -o deploy.sh && sudo bash deploy.sh
 
 # Check if this script was run as root
 if [ "$EUID" -ne 0 ]

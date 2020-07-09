@@ -1,4 +1,6 @@
 #!/bin/bash
+# Easy Mode Install Command:
+#     curl -L "https://raw.githubusercontent.com/mepples21/gtpdockerserver/master/deploy-headerapp-easymode.sh" -o deploy-headerapp-easymode.sh && sudo bash deploy-headerapp-easymode.sh
 
 # Check if this script was run as root
 if [ "$EUID" -ne 0 ]
