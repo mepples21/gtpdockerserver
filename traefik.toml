@@ -1,0 +1,30 @@
+# Change this if needed
+# Copy this file to the traefik directory in the docker folder
+logLevel = "ERROR"
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+    address = ":443"
+  [entryPoints.https.tls]
+    [[entryPoints.https.tls.certificates]]
+    certFile = "${TLSCERT}"
+    keyFile = "${TLSKEY}"
+
+# REMOVE this section if you don't want the dashboard/API
+#[api]
+#entryPoint = "api"
+#dashboard = true
+
+[retry]
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "${DOMAIN}"
+watch = true
+# I prefer to expose my containers explicitly
+exposedbydefault = false

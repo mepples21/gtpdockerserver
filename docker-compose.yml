@@ -6,12 +6,55 @@ services:
         restart: always
         ports: 
           - "3000:8085"
+        networks: 
+          - web
+        labels: 
+          - "traefik.enable=true"
+          - "traefik.backend=headerapp"
+          - "traefik.frontend.rule=Host:headerapp.${DOMAINNAME}"
+#          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
+          - "traefik.port=8085"
+          - "traefik.docker.network=web"
+          - "traefik.frontend.headers.SSLRedirect=true"
+          - "traefik.frontend.headers.STSSeconds=315360000"
+          - "traefik.frontend.headers.browserXSSFilter=true"
+          - "traefik.frontend.headers.contentTypeNosniff=true"
+          - "traefik.frontend.headers.forceSTSHeader=true"
+          - "traefik.frontend.headers.SSLHost=example.com"
+          - "traefik.frontend.headers.STSIncludeSubdomains=true"
+          - "traefik.frontend.headers.STSPreload=true"
+          - "traefik.frontend.headers.frameDeny=true"
     samlapp:
-        image: 
-        container_name: 
+        image: mepples21/samlapp
+        container_name: samlapp
         restart: always
         ports: 
-          - 
+          - "3001:80"
+          - "3002:443"
+        environment: 
+          - SIMPLESAMLPHP_SP_ENTITY_ID=https://samlapp.michaelepping.com
+          - SIMPLESAMLPHP_IDP_METADATA_URL=https://login.microsoftonline.com/0348ff6f-154e-41c2-b1b7-60743cb165dc/federationmetadata/2007-06/federationmetadata.xml?appid=e962affe-2a68-4927-92c4-fff0a4844b3b
+          - SIMPLESAMLPHP_IDP_SSO_URL=https://login.microsoftonline.com/0348ff6f-154e-41c2-b1b7-60743cb165dc/saml2
+          - SIMPLESAMLPHP_IDP_SLO_URL=https://login.microsoftonline.com/common/wsfederation?wa=wsignout1.0
+          - SIMPLESAMLPHP_IDP_CERT_FINGERPRINT=92be0f34a861ad841e57d645ad1ac84af92a79bc
+        networks: 
+          - web
+        labels: 
+          - "traefik.enable=true"
+          - "traefik.backend=samlapp"
+          - "traefik.frontend.rule=Host:samlapp.${DOMAINNAME}"
+#          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
+          - "traefik.port=443"
+          - "traefik.docker.network=web"
+          - "traefik.frontend.headers.SSLRedirect=true"
+          - "traefik.frontend.headers.STSSeconds=315360000"
+          - "traefik.frontend.headers.browserXSSFilter=true"
+          - "traefik.frontend.headers.contentTypeNosniff=true"
+          - "traefik.frontend.headers.forceSTSHeader=true"
+          - "traefik.frontend.headers.SSLHost=example.com"
+          - "traefik.frontend.headers.STSIncludeSubdomains=true"
+          - "traefik.frontend.headers.STSPreload=true"
+          - "traefik.frontend.headers.frameDeny=true"
     oidcapp:
         image: 
         container_name: 
@@ -24,6 +67,66 @@ services:
         restart: always
         ports: 
           - 
+    jwtdecoder:
+        image: mepples21/jwtdecoder:latest
+        container_name: jwtdecoder
+        restart: always
+        ports: 
+          - "3006:80"
+        networks: 
+          - web
+        labels: 
+          - "traefik.enable=true"
+          - "traefik.backend=jwtdecoder"
+          - "traefik.frontend.rule=Host:jwtdecoder.${DOMAINNAME}"
+#          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
+          - "traefik.port=80"
+          - "traefik.docker.network=web"
+          - "traefik.frontend.headers.SSLRedirect=true"
+          - "traefik.frontend.headers.STSSeconds=315360000"
+          - "traefik.frontend.headers.browserXSSFilter=true"
+          - "traefik.frontend.headers.contentTypeNosniff=true"
+          - "traefik.frontend.headers.forceSTSHeader=true"
+          - "traefik.frontend.headers.SSLHost=example.com"
+          - "traefik.frontend.headers.STSIncludeSubdomains=true"
+          - "traefik.frontend.headers.STSPreload=true"
+          - "traefik.frontend.headers.frameDeny=true"
+    traefik:
+        hostname: traefik
+        image: traefik:v1.7.24
+        container_name: traefik
+        restart: always
+        domainname: ${DOMAINNAME}
+        networks:
+          - default
+          - web
+        ports:
+          - "80:80"
+          - "443:443"
+          - "8080:8080"
+        labels:
+          - "traefik.enable=true"
+          - "traefik.backend=traefik"
+          - "traefik.frontend.rule=Host:gtptraefik.${DOMAINNAME}"
+#          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /traefik"
+          - "traefik.port=8080"
+          - "traefik.docker.network=traefik_proxy"
+          - "traefik.frontend.headers.SSLRedirect=true"
+          - "traefik.frontend.headers.STSSeconds=315360000"
+          - "traefik.frontend.headers.browserXSSFilter=true"
+          - "traefik.frontend.headers.contentTypeNosniff=true"
+          - "traefik.frontend.headers.forceSTSHeader=true"
+          - "traefik.frontend.headers.SSLHost=example.com"
+          - "traefik.frontend.headers.STSIncludeSubdomains=true"
+          - "traefik.frontend.headers.STSPreload=true"
+          - "traefik.frontend.headers.frameDeny=true"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+          - ${USERDIR}/docker/traefik:/etc/traefik
+          - ${USERDIR}/docker/shared:/shared
 networks:
+    web:
+        external:
+            name: web
     default:
         driver: bridge
