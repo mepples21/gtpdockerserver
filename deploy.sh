@@ -16,8 +16,13 @@ apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io -y
 
 # Install Docker Compose
-curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+dockercompose=$1
+if [ ! -f $dockercompose ]; then
+    curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+else
+    echo "Docker Compose is already installed."
+fi
 
 # Reload bashrc
 source ~/.bashrc
@@ -29,10 +34,16 @@ mkdir ~/docker/shared
 curl -L "https://raw.githubusercontent.com/mepples21/gtpdockerserver/master/docker-compose.yml" -o ~/docker/docker-compose.yml
 curl -L "https://raw.githubusercontent.com/mepples21/gtpdockerserver/master/traefik.toml" -o ~/docker/traefik/traefik.toml
 
-# Setup domain and certificate
+# Setup domain in config files
 read -e -p "Enter the domain you'd like to use, e.g., 'contoso.com': " domain
+sed -i 's|${DOMAINNAME}|'$domain'|g' ~/docker/docker-compose.yml
+sed -i 's|${DOMAINNAME}|'$domain'|g' ~/docker/traefik/traefik.toml
+
+# Setup certificates and update config files
 read -e -p "Enter the path to your certificate pfx file, e.g., '/home/user1/cert.pfx' or '~/cert.pfx': " certpath
-echo $domain
-echo $certpath
-sed 's/${DOMAIN}/'"$DOMAIN"'/g' ~/docker/docker-compose.yml
-sed 's/${DOMAIN}/'"$DOMAIN"'/g' ~/docker/traefik/traefik.toml
+read -e -p "Enter the password for your pfx certificate file: " certpassword
+openssl pkcs12 -in $certpath -password pass:$certpassword -clcerts -nokeys -out ~/docker/shared/certificate.crt
+openssl pkcs12 -in $certpath -password pass:$certpassword -nocerts -nodes -out ~/docker/shared/certificatekey.key
+
+# Deploy containers
+docker-compose -f ~/docker/docker-compose.yml up -d
