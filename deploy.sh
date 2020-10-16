@@ -53,6 +53,17 @@ echo $domain >> ~/deploy_config
 sed -i 's|${DOMAINNAME}|'$domain'|g' ~/docker/docker-compose.yml
 sed -i 's|${DOMAINNAME}|'$domain'|g' ~/docker/traefik/traefik.toml
 
+# Setup OpenID Connect app in config files
+read -e -p "Enter the App ID for your OpenID Connect App Registration: " appid
+echo $appid >> ~/deploy_config
+sed -i 's|${APPID}|'$appid'|g' ~/docker/docker-compose.yml
+read -e -p "Enter the Tenant ID for your lab tenant: " tenantid
+echo $tenantid >> ~/deploy_config
+sed -i 's|${TENANTID}|'$tenantid'|g' ~/docker/docker-compose.yml
+read -e -p "Enter the redirect URI for your App registration, e.g., https://app.contoso.com/oidc: " redirecturi
+echo $redirecturi >> ~/deploy_config
+sed -i 's|${REDIRECTURI}|'$redirecturi'|g' ~/docker/docker-compose.yml
+
 # Setup certificates and update config files
 read -p "Enter the path to your certificate pfx file, e.g., '/home/user1/cert.pfx' or '~/cert.pfx': " certpath
 echo $certpath >> ~/deploy_config

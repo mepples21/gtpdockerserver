@@ -3,7 +3,7 @@ services:
     headerapp:
         image: mepples21/headerapp:latest
         container_name: headerapp
-        restart: always
+        restart: unless-stopped
         ports: 
           - "3000:8085"
         networks: 
@@ -11,7 +11,7 @@ services:
         labels: 
           - "traefik.enable=true"
           - "traefik.backend=headerapp"
-          - "traefik.frontend.rule=Host:headerapp.${DOMAINNAME}"
+          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /headerapp"
           - "traefik.port=8085"
           - "traefik.docker.network=web"
           - "traefik.frontend.headers.SSLRedirect=true"
@@ -26,7 +26,7 @@ services:
 #     samlapp:
 #         image: mepples21/samlapp
 #         container_name: samlapp
-#         restart: always
+#         restart: unless-stopped
 #         ports: 
 #           - "3001:80"
 #           - "3002:443"
@@ -41,8 +41,8 @@ services:
 #         labels: 
 #           - "traefik.enable=true"
 #           - "traefik.backend=samlapp"
-#           - "traefik.frontend.rule=Host:samlapp.${DOMAINNAME}"
-# #          - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
+# #         - "traefik.frontend.rule=Host:samlapp.${DOMAINNAME}"
+#           - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
 #           - "traefik.port=443"
 #           - "traefik.docker.network=web"
 #           - "traefik.frontend.headers.SSLRedirect=true"
@@ -54,22 +54,37 @@ services:
 #           - "traefik.frontend.headers.STSIncludeSubdomains=true"
 #           - "traefik.frontend.headers.STSPreload=true"
 #           - "traefik.frontend.headers.frameDeny=true"
-#     oidcapp:
-#         image: 
-#         container_name: 
-#         restart: always
-#         ports: 
-#           - 
-#     kerberosapp:
-#         image: 
-#         container_name: 
-#         restart: always
-#         ports: 
-#           - 
+    oidcapp:
+        image: mepples21/oidcapp:latest
+        container_name: oidcapp
+        restart: unless-stopped
+        ports:
+          - 3001:3000
+        environment:
+          - "APPLICATIONID=${APPID}"
+          - "TENANTID=${TENANTID}"
+          - "REDIRECTURI=${REDIRECTURI}"
+        networks: 
+          - web
+        labels: 
+          - "traefik.enable=true"
+          - "traefik.backend=oidcapp"
+          - "traefik.frontend.rule=Host:oidc.${DOMAINNAME}"
+          - "traefik.port=3000"
+          - "traefik.docker.network=web"
+          - "traefik.frontend.headers.SSLRedirect=true"
+          - "traefik.frontend.headers.STSSeconds=315360000"
+          - "traefik.frontend.headers.browserXSSFilter=true"
+          - "traefik.frontend.headers.contentTypeNosniff=true"
+          - "traefik.frontend.headers.forceSTSHeader=true"
+          - "traefik.frontend.headers.SSLHost=example.com"
+          - "traefik.frontend.headers.STSIncludeSubdomains=true"
+          - "traefik.frontend.headers.STSPreload=true"
+          - "traefik.frontend.headers.frameDeny=true"
     jwtdecoder:
         image: mepples21/jwtdecoder:latest
         container_name: jwtdecoder
-        restart: always
+        restart: unless-stopped
         ports: 
           - "3006:80"
         networks: 
@@ -91,9 +106,9 @@ services:
           - "traefik.frontend.headers.frameDeny=true"
     traefik:
         hostname: traefik
-        image: traefik:v1.7.24
+        image: traefik:latest
         container_name: traefik
-        restart: always
+        restart: unless-stopped
         domainname: ${DOMAINNAME}
         networks:
           - default
